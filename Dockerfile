@@ -18,29 +18,54 @@ RUN dpkg-reconfigure locales
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
 RUN sudo dpkg -i influxdb_latest_amd64.deb
 
-# ADD run.sh /run.sh
-# RUN chmod 755 /*.sh
-
-RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip
+RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip supervisor
 
 RUN pip install gunicorn graphite-api[sentry,cyanite] graphite_influxdb
 
+# add graphite-api config
 ADD graphite-api.yaml /etc/graphite-api.yaml
 RUN chmod 0644 /etc/graphite-api.yaml
 
+# bootstrap to add graphite db
+ADD ./bootstrap.sh /bootstrap.sh
+RUN chmod 0744 /bootstrap.sh
 
-EXPOSE 2003 # Graphite
-EXPOSE 8083 # Admin
-EXPOSE 8086 # API
-EXPOSE 8090 # Raft
-EXPOSE 8099 # Replication
-EXPOSE 8000 # graphite-api
+ADD ./influxdb.conf /usr/local/etc/influxdb.conf
+ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+
+RUN mkdir /srv/graphite
+RUN chmod 777 /srv/graphite
+
+
+# Graphite
+EXPOSE 2003
+
+# Admin
+EXPOSE 8083
+
+# API
+EXPOSE 8086
+
+# Raft 
+EXPOSE 8090
+
+# Replication 
+EXPOSE 8099
+
+# graphite-api 
+EXPOSE 8000 
 
 VOLUME "/opt/influxdb/shared/data/db"
 VOLUME "/opt/graphite"
+VOLUME "/var/log/supervisor"
 
+
+# ADD run.sh /run.sh
+# RUN chmod 755 /*.sh
 # CMD ["/run.sh"]
 # CMD ["-config=/opt/influxdb/shared/config.json"]
 # ENTRYPOINT ["/usr/bin/influxdb"]
 
-CMD gunicorn -b 0.0.0.0:8000 -w 2 --log-level debug graphite_api.app:app
+
+CMD ["/usr/bin/supervisord"]

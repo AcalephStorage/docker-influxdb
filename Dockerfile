@@ -40,6 +40,7 @@ RUN chmod 777 /srv/graphite
 
 # Graphite
 EXPOSE 2003
+EXPOSE 2003/udp
 
 # Admin
 EXPOSE 8083

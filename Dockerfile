@@ -55,13 +55,12 @@ EXPOSE 8090
 EXPOSE 8099
 
 # graphite-api 
-EXPOSE 8000 
+EXPOSE 8000
 
-VOLUME "/opt/influxdb/shared/data/db"
-VOLUME "/opt/graphite"
-VOLUME "/var/log/supervisor"
-
-
+# VOLUME [ "/opt/influxdb/shared/data/db" ]
+# VOLUME [ "/opt/graphite" ]
+VOLUME [ "/var/log/supervisor" ]
+VOLUME [ "/var/lib/influxdb" ]
 
 
 CMD ["/usr/bin/supervisord"]

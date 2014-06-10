@@ -61,11 +61,6 @@ VOLUME "/opt/graphite"
 VOLUME "/var/log/supervisor"
 
 
-# ADD run.sh /run.sh
-# RUN chmod 755 /*.sh
-# CMD ["/run.sh"]
-# CMD ["-config=/opt/influxdb/shared/config.json"]
-# ENTRYPOINT ["/usr/bin/influxdb"]
 
 
 CMD ["/usr/bin/supervisord"]

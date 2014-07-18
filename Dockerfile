@@ -62,5 +62,4 @@ EXPOSE 8000
 VOLUME [ "/var/log/supervisor" ]
 VOLUME [ "/var/lib/influxdb" ]
 
-
 CMD ["/usr/bin/supervisord"]

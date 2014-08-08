@@ -62,4 +62,25 @@ EXPOSE 8000
 VOLUME [ "/var/log/supervisor" ]
 VOLUME [ "/var/lib/influxdb" ]
 
+# need the following deps for the latest versions
+RUN pip install Flask-Cache statsd
+RUN pip install raven blinker
+
+# patched version with cache
+RUN pip uninstall -y graphite-api 
+RUN pip install https://github.com/Dieterbe/graphite-api/tarball/check-series-early
+
+# latest graphite-influxdb
+RUN pip uninstall -y graphite-influxdb
+RUN pip install https://github.com/Vimeo/graphite-influxdb/tarball/master
+
+# latest influxdb-python
+RUN pip uninstall -y influxdb
+RUN pip install https://github.com/influxdb/influxdb-python/tarball/master
+
+# cleanup
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+VOLUME [ "/tmp/graphite-api-cache"]
+
 CMD ["/usr/bin/supervisord"]

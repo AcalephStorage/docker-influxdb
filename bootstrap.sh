@@ -17,3 +17,9 @@ echo 'creating graphite user'
 # create graphite user
 wget --post-data='{"name": "graphite", "password": "graphite"}' 'http://localhost:8086/db/graphite/users?u=root&p=root'
 
+# sigh.. need data for maintain_cache to work or else it fails miserably.
+echo "bootstrap 1 `date +%s`" | nc -q0 localhost 2003
+
+# maintain cache
+echo 'running cache maintenance'
+/usr/local/bin/maintain_cache.py >>/var/log/supervisor/maintain_cache.log 2>&1

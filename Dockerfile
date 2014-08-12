@@ -1,6 +1,6 @@
 FROM ubuntu:trusty
 MAINTAINER Acaleph <admin@acale.ph>
- 
+
 RUN echo "deb http://archive.ubuntu.com/ubuntu trusty main universe" > /etc/apt/sources.list
 
 # Install InfluxDB
@@ -15,12 +15,11 @@ ENV LC_ALL en_US.UTF-8
 RUN locale-gen en_US.UTF-8
 RUN dpkg-reconfigure locales
 
-RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
-RUN sudo dpkg -i influxdb_latest_amd64.deb
+RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
 
 RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip supervisor
 
-RUN pip install gunicorn graphite-api[sentry,cyanite] graphite_influxdb
+RUN pip install gunicorn graphite-api[sentry,cyanite] graphite_influxdb Flask-Cache statsd raven blinker
 
 # add graphite-api config
 ADD graphite-api.yaml /etc/graphite-api.yaml
@@ -34,40 +33,11 @@ ADD ./influxdb.conf /usr/local/etc/influxdb.conf
 ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
-RUN mkdir /srv/graphite
-RUN chmod 777 /srv/graphite
+RUN mkdir /srv/graphite && chmod 777 /srv/graphite
 
-
-# Graphite
-EXPOSE 2003
-EXPOSE 2003/udp
-
-# Admin
-EXPOSE 8083
-
-# API
-EXPOSE 8086
-
-# Raft 
-EXPOSE 8090
-
-# Replication 
-EXPOSE 8099
-
-# graphite-api 
-EXPOSE 8000
-
-# VOLUME [ "/opt/influxdb/shared/data/db" ]
-# VOLUME [ "/opt/graphite" ]
-VOLUME [ "/var/log/supervisor" ]
-VOLUME [ "/var/lib/influxdb" ]
-
-# need the following deps for the latest versions
-RUN pip install Flask-Cache statsd
-RUN pip install raven blinker
 
 # patched version with cache
-RUN pip uninstall -y graphite-api 
+RUN pip uninstall -y graphite-api
 RUN pip install https://github.com/Dieterbe/graphite-api/tarball/check-series-early
 
 # latest graphite-influxdb
@@ -81,6 +51,29 @@ RUN pip install https://github.com/influxdb/influxdb-python/tarball/master
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-VOLUME [ "/tmp/graphite-api-cache"]
+
+# Graphite
+EXPOSE 2003
+EXPOSE 2003/udp
+
+# Admin
+EXPOSE 8083
+
+# API
+EXPOSE 8086
+
+# Raft
+EXPOSE 8090
+
+# Replication
+EXPOSE 8099
+
+# graphite-api
+EXPOSE 8000
+
+# VOLUME [ "/opt/influxdb/shared/data/db" ]
+# VOLUME [ "/opt/graphite" ]
+VOLUME [ "/var/log/supervisor", "/var/lib/influxdb", "/tmp/graphite-api-cache" ]
+
 
 CMD ["/usr/bin/supervisord"]

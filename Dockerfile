@@ -73,7 +73,7 @@ EXPOSE 8000
 
 # VOLUME [ "/opt/influxdb/shared/data/db" ]
 # VOLUME [ "/opt/graphite" ]
-VOLUME [ "/var/log/supervisor", "/var/lib/influxdb", "/tmp/graphite-api-cache" ]
+VOLUME [ "/var/log/supervisor", "/var/lib/influxdb" ]
 
 
 CMD ["/usr/bin/supervisord"]

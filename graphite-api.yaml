@@ -1,4 +1,3 @@
-search_index: /srv/graphite/index
 finders:
   - graphite_influxdb.InfluxdbFinder
 influxdb:

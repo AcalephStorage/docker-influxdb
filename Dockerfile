@@ -1,7 +1,8 @@
 FROM ubuntu:trusty
 MAINTAINER Acaleph <admin@acale.ph>
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu trusty main universe" > /etc/apt/sources.list
+# the universe is broken. thank you https://github.com/docker/docker/issues/5388 for the fix.
+#RUN echo "deb http://archive.ubuntu.com/ubuntu trusty main universe" > /etc/apt/sources.list
 
 # Install InfluxDB
 RUN apt-get update
@@ -19,7 +20,17 @@ RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i i
 
 RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip supervisor
 
-RUN pip install gunicorn graphite-api[sentry,cyanite] graphite_influxdb Flask-Cache statsd raven blinker
+RUN pip install gunicorn Flask-Cache statsd raven blinker
+
+# patched version with cache
+RUN pip install https://github.com/Dieterbe/graphite-api/tarball/check-series-early
+
+# latest graphite-influxdb
+RUN pip install https://github.com/Vimeo/graphite-influxdb/tarball/master
+
+# latest influxdb-python
+RUN pip uninstall -y influxdb
+RUN pip install https://github.com/influxdb/influxdb-python/tarball/master
 
 # add graphite-api config
 ADD graphite-api.yaml /etc/graphite-api.yaml
@@ -34,19 +45,6 @@ ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
 RUN mkdir /srv/graphite && chmod 777 /srv/graphite
-
-
-# patched version with cache
-RUN pip uninstall -y graphite-api
-RUN pip install https://github.com/Dieterbe/graphite-api/tarball/check-series-early
-
-# latest graphite-influxdb
-RUN pip uninstall -y graphite-influxdb
-RUN pip install https://github.com/Vimeo/graphite-influxdb/tarball/master
-
-# latest influxdb-python
-RUN pip uninstall -y influxdb
-RUN pip install https://github.com/influxdb/influxdb-python/tarball/master
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

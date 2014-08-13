@@ -43,6 +43,9 @@ RUN chmod 0744 /bootstrap.sh
 ADD ./influxdb.conf /usr/local/etc/influxdb.conf
 ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# HACK. added 1 second interval.
+ADD ./maintain_cache.py /usr/local/bin/maintain_cache.py
+RUN chmod 0744 /usr/local/bin/maintain_cache.py
 
 RUN mkdir /srv/graphite && chmod 777 /srv/graphite
 

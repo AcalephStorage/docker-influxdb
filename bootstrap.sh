@@ -22,4 +22,4 @@ echo "bootstrap 1 `date +%s`" | nc -q0 localhost 2003
 
 # maintain cache
 echo 'running cache maintenance'
-/usr/local/bin/maintain_cache.py >>/var/log/supervisor/maintain_cache.log 2>&1
+exec /usr/local/bin/maintain_cache.py > /dev/null

@@ -25,8 +25,8 @@ RUN pip install gunicorn Flask-Cache statsd raven blinker
 # patched version with cache
 RUN pip install https://github.com/Dieterbe/graphite-api/tarball/check-series-early
 
-# latest graphite-influxdb
-RUN pip install https://github.com/Vimeo/graphite-influxdb/tarball/master
+# graphite-influxdb PR#16 which fixes metrics api
+RUN pip install https://github.com/svanharmelen/graphite-influxdb/tarball/bugfix
 
 # latest influxdb-python
 RUN pip uninstall -y influxdb

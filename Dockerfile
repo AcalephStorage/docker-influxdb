@@ -18,7 +18,7 @@ RUN dpkg-reconfigure locales
 
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_0.8.0-rc.4_amd64.deb && dpkg -i influxdb_0.8.0-rc.4_amd64.deb
 
-RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip supervisor
+RUN apt-get install -y build-essential python-dev libffi-dev libcairo2-dev python-pip supervisor curl
 
 RUN pip install gunicorn Flask-Cache statsd raven blinker
 

@@ -10,12 +10,11 @@ sleep 10
 
 echo 'creating graphite database'
 # create graphite database
-wget --post-data='{"name": "graphite"}' 'http://localhost:8086/db?u=root&p=root'
-
+curl -X POST -d '{"name": "graphite"}' 'http://localhost:8086/db?u=root&p=root'
 
 echo 'creating graphite user'
 # create graphite user
-wget --post-data='{"name": "graphite", "password": "graphite"}' 'http://localhost:8086/db/graphite/users?u=root&p=root'
+curl -X POST -d '{"name": "graphite", "password": "graphite"}' 'http://localhost:8086/db/graphite/users?u=root&p=root'
 
 # sigh.. need data for maintain_cache to work or else it fails miserably.
 echo "bootstrap 1 `date +%s`" | nc -q0 localhost 2003

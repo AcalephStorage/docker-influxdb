@@ -1,0 +1,45 @@
+[
+  {
+    "database": "graphite",
+    "spaces": [
+      {
+        "name": "everything",
+        "retentionPolicy": "7d",
+        "shardDuration": "1d",
+        "regex": "/.*/",
+        "replicationFactor": 1,
+        "split": 1
+      },
+      {
+        "name": "30s:7d",
+        "retentionPolicy": "7d",
+        "shardDuration": "1m",
+        "regex": "/30s.*/",
+        "replicationFactor": 1,
+        "split": 1
+      },
+      {
+        "name": "1m:31d",
+        "retentionPolicy": "31d",
+        "shardDuration": "10m",
+        "regex": "/10m.*/",
+        "replicationFactor": 1,
+        "split": 1
+      },
+      {
+        "name": "10m:1y",
+        "retentionPolicy": "1y",
+        "shardDuration": "1h",
+        "replicationFactor": 1,
+        "split": 1
+      },
+      {
+        "name": "1h:5y",
+        "retentionPolicy": "5y",
+        "shardDuration": "6h",
+        "replicationFactor": 1,
+        "split": 1
+      }
+    ]
+  }
+]

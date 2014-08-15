@@ -1,0 +1,5 @@
+select mean(value) as value from /^ceph.*/ group by time(30s) into 30s.:series_name
+select mean(value) as value from /^servers.*/ group by time(30s) into 30s.:series_name
+select mean(value) as value from /^30s.*/ group by time(1m) into 1m.:series_name
+select mean(value) as value from /^1m.*/ group by time(10m) into 10m.:series_name
+select mean(value) as value from /^10m.*/ group by time(1h) into 1h.:series_name

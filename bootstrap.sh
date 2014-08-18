@@ -13,7 +13,6 @@ influxdb_root_password=${INFLUXDB_ROOT_PASSWORD:=root}
 # location of config and data files
 influxdb_config=/usr/local/etc/influxdb.conf
 influxdb_db_config=/usr/local/etc/database.json
-continuous_queries_data=/usr/local/etc/continuous_queries.dat
 
 
 # start influxdb, if a parameter is given, influxdb will be 
@@ -66,14 +65,17 @@ function change_root_password() {
 function setup_graphite() {
 	if ! db_exist graphite; then
 		echo 'loading configuration'
-		$influxdb_bin -load-database-config $influxdb_db_config -load-server="${influxdb_host}:${influxdb_api_port}" -load-user="root" -load-password="${influxdb_root_password}"
+		result=`curl -s -X POST -w %{http_code} "http://${influxdb_host}:${influxdb_api_port}/cluster/database_configs/graphite?u=root&p=${influxdb_root_password}" --data-binary @${influxdb_db_config}`
+		if [[ "$result" != "201" ]]; then
+			echo "unable to load database"
+			exit 1
+		fi
 		echo 'creating graphite user'
-		curl -s -o /dev/null -X POST -d '{"name": "graphite", "password": "graphite"}' "http://${influxdb_host}:${influxdb_api_port}/db/graphite/users?u=root&p=${influxdb_root_password}"
-		echo 'create graphite continuous_queries'
-		while read i; do
-			echo "creating continuous query: ${i}"
-			curl -s -o /dev/null -G "http://${influxdb_host}:${influxdb_api_port}/db/graphite/series?u=root&p=${influxdb_root_password}" --data-urlencode "q=${i}"
-		done < ${continuous_queries_data}
+		result=`curl -s -o /dev/null -X POST -w %{http_code} -d '{"name": "graphite", "password": "graphite"}' "http://${influxdb_host}:${influxdb_api_port}/db/graphite/users?u=root&p=${influxdb_root_password}"`
+		if [[ "$result" != "200" ]]; then
+			echo "unable to create database user"
+			exit 1
+		fi
 	else
 		echo 'graphite db already exists.'
 	fi

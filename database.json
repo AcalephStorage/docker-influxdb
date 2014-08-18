@@ -11,7 +11,7 @@
     {
       "name": "30s:7d",
       "retentionPolicy": "7d",
-      "shardDuration": "1m",
+      "shardDuration": "1d",
       "regex": "/30s.*/",
       "replicationFactor": 1,
       "split": 1
@@ -19,7 +19,7 @@
     {
       "name": "1m:31d",
       "retentionPolicy": "31d",
-      "shardDuration": "10m",
+      "shardDuration": "1d",
       "regex": "/10m.*/",
       "replicationFactor": 1,
       "split": 1
@@ -27,14 +27,14 @@
     {
       "name": "10m:1y",
       "retentionPolicy": "1y",
-      "shardDuration": "1h",
+      "shardDuration": "1d",
       "replicationFactor": 1,
       "split": 1
     },
     {
       "name": "1h:5y",
       "retentionPolicy": "5y",
-      "shardDuration": "6h",
+      "shardDuration": "1d",
       "replicationFactor": 1,
       "split": 1
     }
@@ -42,9 +42,12 @@
   "continuousQueries": [
     "select mean(value) as value from /^ceph.*/ group by time(30s) into 30s.:series_name",
     "select mean(value) as value from /^servers.*/ group by time(30s) into 30s.:series_name",
-    "select mean(value) as value from /^30s.*/ group by time(1m) into 1m.:series_name",
-    "select mean(value) as value from /^1m.*/ group by time(10m) into 10m.:series_name",
-    "select mean(value) as value from /^10m.*/ group by time(1h) into 1h.:series_name"
+    "select mean(value) as value from /^ceph.*/ group by time(1m) into 1m.:series_name",
+    "select mean(value) as value from /^servers.*/ group by time(1m) into 1m.:series_name",
+    "select mean(value) as value from /^ceph.*/ group by time(10m) into 10m.:series_name",
+    "select mean(value) as value from /^servers.*/ group by time(10m) into 10m.:series_name",
+    "select mean(value) as value from /^ceph.*/ group by time(1h) into 1h.:series_name",
+    "select mean(value) as value from /^servers.*/ group by time(1h) into 1h.:series_name"
   ]
 }
 

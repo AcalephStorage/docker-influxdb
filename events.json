@@ -1,0 +1,41 @@
+{
+  "spaces": [
+    {
+      "name": "everything",
+      "retentionPolicy": "1y",
+      "shardDuration": "30d",
+      "regex": "/.*/",
+      "replicationFactor": 1,
+      "split": 1
+    },
+    {
+      "name": "daily summary",
+      "retentionPolicy": "7d",
+      "shardDuration": "1d",
+      "regex": "/1d.*/",
+      "replicationFactor": 1,
+      "split": 1
+    },
+    {
+      "name": "weekly summary",
+      "retentionPolicy": "7d",
+      "shardDuration": "1d",
+      "regex": "/7d.*/",
+      "replicationFactor": 1,
+      "split": 1
+    },
+    {
+      "name": "monthly summary",
+      "retentionPolicy": "1y",
+      "shardDuration": "30d",
+      "regex": "/30d.*/",
+      "replicationFactor": 1,
+      "split": 1
+    }
+  ],
+  "continuousQueries": [
+    "select count(status) from /^event.*/ group by time(1d), status into 1d.:series_name",
+    "select count(status) from /^event.*/ group by time(7d), status into 7d.:series_name",
+    "select count(status) from /^event.*/ group by time(30d), status into 30d.:series_name"
+  ]
+}

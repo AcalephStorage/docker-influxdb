@@ -16,7 +16,8 @@ RUN dpkg-reconfigure locales
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_0.8.0-rc.5_amd64.deb && dpkg -i influxdb_0.8.0-rc.5_amd64.deb
 
 ADD ./influxdb.conf /usr/local/etc/influxdb.conf
-ADD ./database.json /usr/local/etc/database.json
+ADD ./graphite.json /usr/local/etc/graphite.json
+ADD ./events.json /usr/local/etc/events.json
 
 ADD ./bootstrap.sh /bootstrap.sh
 RUN chmod 0744 /bootstrap.sh

@@ -24,10 +24,10 @@ influxdb_events_config=/usr/local/etc/events.json
 # ran in the background
 function start_influxdb() {
 	if [[ -n "$1" ]]; then
-		$influxdb_bin --config=$influxdb_config &
+		exec $influxdb_bin --config=$influxdb_config &
 		sleep 10
 	else
-		$influxdb_bin --config=$influxdb_config
+		exec $influxdb_bin --config=$influxdb_config
 	fi
 }
 

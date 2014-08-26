@@ -1,8 +1,5 @@
 #!/bin/bash -e
  
-# the influxdb binary
-influxdb_bin=/usr/bin/influxdb
-
 # influxdb host and port
 influxdb_host=localhost
 influxdb_api_port=8086
@@ -15,21 +12,9 @@ influxdb_events_user=${INFLUXDB_EVENTS_USER:=consul-notifier}
 influxdb_events_password=${INFLUXDB_EVENTS_PASSWORD:=consul-notifier}
 
 # location of config and data files
-influxdb_config=/usr/local/etc/influxdb.conf
 influxdb_graphite_config=/usr/local/etc/graphite.json
 influxdb_events_config=/usr/local/etc/events.json
 
-
-# start influxdb, if a parameter is given, influxdb will be 
-# ran in the background
-function start_influxdb() {
-	if [[ -n "$1" ]]; then
-		exec $influxdb_bin --config=$influxdb_config &
-		sleep 10
-	else
-		exec $influxdb_bin --config=$influxdb_config
-	fi
-}
 
 
 
@@ -107,14 +92,14 @@ function setup_events_db() {
 
 # main function
 function main() {
-	start_influxdb background
+	sleep 10
 	change_root_password
 	setup_graphite
 	setup_events_db
-	kill $! 	# kill influxdb
-	start_influxdb
+	while :; do sleep 60; done
 }
 
 
 # run main
 main
+

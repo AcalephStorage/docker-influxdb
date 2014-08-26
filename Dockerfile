@@ -14,13 +14,17 @@ RUN locale-gen en_US.UTF-8
 RUN dpkg-reconfigure locales
 
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
+RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && chmod 0744 /usr/local/bin/forego
 
 ADD ./influxdb.conf /usr/local/etc/influxdb.conf
 ADD ./graphite.json /usr/local/etc/graphite.json
 ADD ./events.json /usr/local/etc/events.json
 
-ADD ./bootstrap.sh /bootstrap.sh
-RUN chmod 0744 /bootstrap.sh
+ADD ./Procfile /usr/local/etc/Procfile
+RUN chmod 0644 /usr/local/etc/Procfile
+
+ADD ./bootstrap.sh /usr/local/etc/bootstrap.sh
+RUN chmod 0744 /usr/local/etc/bootstrap.sh
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -43,4 +47,4 @@ EXPOSE 2003/udp
 
 VOLUME /var/lib/influxdb
 
-CMD /bootstrap.sh
+CMD ["/usr/local/bin/forego", "start", "-f", "/usr/local/etc/Procfile", "-c", "influxdb=1"]

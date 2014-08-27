@@ -16,18 +16,26 @@ RUN dpkg-reconfigure locales
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
 RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && chmod 0744 /usr/local/bin/forego
 
-ADD ./influxdb.conf /usr/local/etc/influxdb.conf
-ADD ./graphite.json /usr/local/etc/graphite.json
-ADD ./events.json /usr/local/etc/events.json
+ADD ./configs/influxdb.conf /usr/local/etc/influxdb.conf
+ADD ./configs/graphite_db.json /usr/local/etc/graphite_db.json
+ADD ./configs/default_db.json /usr/local/etc/default_db.json
 
-ADD ./Procfile /usr/local/etc/Procfile
+ADD ./configs/Procfile /usr/local/etc/Procfile
 RUN chmod 0644 /usr/local/etc/Procfile
 
-ADD ./bootstrap.sh /usr/local/etc/bootstrap.sh
+ADD ./scripts//bootstrap.sh /usr/local/etc/bootstrap.sh
 RUN chmod 0744 /usr/local/etc/bootstrap.sh
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV ROOT_PASSWORD root
+ENV GRAPHITE_DATABASE graphite
+ENV GRAPHITE_USERNAME graphite
+ENV GRAPHITE_PASSWORD graphite
+ENV DEFAULT_DATABASE acaleph
+ENV DEFAULT_USERNAME acaleph
+ENV DEFAULT_PASSWORD acaleph
 
 # Admin
 EXPOSE 8083

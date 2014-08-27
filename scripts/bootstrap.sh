@@ -43,7 +43,7 @@ function create_database() {
 	user=$2
 	pass=$3
 	config=$4
-	if ! db_exist database_name; then
+	if ! db_exist ${db}; then
 		echo "creating ${db} db"
 		result=`curl -s -X POST -w %{http_code} "http://${host}:${port}/cluster/database_configs/${db}?u=root&p=${ROOT_PASSWORD}" --data-binary @${config}`
 		if [[ "$result" != "201" ]]; then

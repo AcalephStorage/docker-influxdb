@@ -1,0 +1,34 @@
+{
+  "spaces": [
+    {
+      "name": "30s:7d",
+      "retentionPolicy": "7d",
+      "shardDuration": "1d",
+      "regex": "/.*/",
+      "replicationFactor": 1,
+      "split": 1
+    },
+    {
+      "name": "5m:90d",
+      "retentionPolicy": "90d",
+      "shardDuration": "1d",
+      "regex": "/5m.*/",
+      "replicationFactor": 1,
+      "split": 1
+    },
+    {
+      "name": "1h:1y",
+      "retentionPolicy": "1y",
+      "shardDuration": "1d",
+      "regex": "/1h.*/",
+      "replicationFactor": 1,
+      "split": 1
+    }
+  ],
+  "continuousQueries": [
+    "select mean(value) as value from /^ceph.*/ group by time(5m) into 5m.:series_name",
+    "select mean(value) as value from /^servers.*/ group by time(5m) into 5m.:series_name",
+    "select mean(value) as value from /^ceph.*/ group by time(1h) into 1h.:series_name",
+    "select mean(value) as value from /^servers.*/ group by time(1h) into 1h.:series_name"
+  ]
+}

@@ -2,16 +2,14 @@ FROM ubuntu:trusty
 MAINTAINER Acaleph <admin@acale.ph>
 
 # Install InfluxDB
-RUN apt-get update
-RUN apt-get upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y language-pack-en wget curl python python-pip
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-RUN locale-gen en_US.UTF-8
-RUN dpkg-reconfigure locales
+RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
 RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && chmod 0744 /usr/local/bin/forego
@@ -21,16 +19,10 @@ ADD ./configs/graphite_db.json /usr/local/etc/graphite_db.json
 ADD ./configs/default_db.json /usr/local/etc/default_db.json
 
 ADD ./configs/Procfile /usr/local/etc/Procfile
-RUN chmod 0644 /usr/local/etc/Procfile
 
 ADD ./scripts/bootstrap.sh /usr/local/etc/bootstrap.sh
-RUN chmod 0744 /usr/local/etc/bootstrap.sh
-
 ADD ./scripts/whisper-to-influxdb.py /usr/local/bin/whisper-to-influxdb.py
-RUN chmod 0744 /usr/local/bin/whisper-to-influxdb.py
-
 ADD ./scripts/start /usr/local/etc/start
-RUN chmod 0744 /usr/local/etc/start
 
 RUN pip install whisper
 
@@ -45,21 +37,11 @@ ENV DEFAULT_DATABASE acaleph
 ENV DEFAULT_USERNAME acaleph
 ENV DEFAULT_PASSWORD acaleph
 
-# Admin
-EXPOSE 8083
-
-# API
-EXPOSE 8086
-
-# Raft
-EXPOSE 8090
-
-# Replication
-EXPOSE 8099
+# Admin API Raft Replication
+EXPOSE 8083 8086 8090 8099
 
 # Graphite
-EXPOSE 2003
-EXPOSE 2003/udp
+EXPOSE 2003 2003/udp
 
 VOLUME /var/lib/influxdb
 

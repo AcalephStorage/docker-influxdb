@@ -8,7 +8,7 @@ start() {
 
 migrate_graphite() {
   echo "---> Migrating Graphite"
-  exec /usr/local/bin/whisper-to-influxdb.py /graphite-data
+  exec /usr/local/bin/whisper-to-influxdb.py /graphite-data/
 }
 
 health() {

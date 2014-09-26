@@ -5,7 +5,7 @@ MAINTAINER Acaleph <admin@acale.ph>
 RUN apt-get update
 RUN apt-get upgrade -y
 
-RUN apt-get install -y language-pack-en wget curl
+RUN apt-get install -y language-pack-en wget curl python python-pip
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
@@ -23,8 +23,16 @@ ADD ./configs/default_db.json /usr/local/etc/default_db.json
 ADD ./configs/Procfile /usr/local/etc/Procfile
 RUN chmod 0644 /usr/local/etc/Procfile
 
-ADD ./scripts//bootstrap.sh /usr/local/etc/bootstrap.sh
+ADD ./scripts/bootstrap.sh /usr/local/etc/bootstrap.sh
 RUN chmod 0744 /usr/local/etc/bootstrap.sh
+
+ADD ./scripts/whisper-to-influxdb.py /usr/local/bin/whisper-to-influxdb.py
+RUN chmod 0744 /usr/local/bin/whisper-to-influxdb.py
+
+ADD ./scripts/start /usr/local/etc/start
+RUN chmod 0744 /usr/local/etc/start
+
+RUN pip install whisper
 
 # cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -55,4 +63,8 @@ EXPOSE 2003/udp
 
 VOLUME /var/lib/influxdb
 
-CMD ["/usr/local/bin/forego", "start", "-f", "/usr/local/etc/Procfile", "-c", "influxdb=1"]
+WORKDIR /usr/local/etc
+
+CMD ["start"]
+ENTRYPOINT ["/usr/local/etc/start"]
+

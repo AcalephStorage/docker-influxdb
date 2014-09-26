@@ -1,0 +1,37 @@
+#!/bin/bash
+
+start() {
+  echo "---> Starting Influxdb"
+  echo "----> Start Foreman"
+  exec /usr/local/bin/forego start -f /usr/local/etc/Procfile -c influxdb=1
+}
+
+migrate_graphite() {
+  echo "---> Migrating Graphite"
+  exec /usr/local/bin/whisper-to-influxdb.py /graphite-data
+}
+
+health() {
+  echo "OK - Health check to be implemented"
+  exit 0
+}
+
+run_help() {
+  echo "The following commands are available:"
+  echo "start   - Runs Influxdb"
+  echo "migrate_graphite - Migrates Graphite Whisper data to Influxdb's graphite handler"
+  echo "health - Returns health of the influxdb service"
+}
+
+
+main() {
+  set -eo pipefail
+  case "$1" in
+  start)           shift; start $@;;
+  migrate_graphite)         migrate_graphite;;
+  health)            health;;
+  *)               run_help;;
+  esac
+}
+
+main "$@"

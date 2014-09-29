@@ -2,6 +2,10 @@
 
 start() {
   echo "---> Starting Influxdb"
+  
+  echo "----> Setting max-open-shards to match ulimit"
+  sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" /usr/local/etc/influxdb.conf
+
   echo "----> Start Foreman"
   exec /usr/local/bin/forego start -f /usr/local/etc/Procfile -c influxdb=1
 }

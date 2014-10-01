@@ -54,6 +54,7 @@ def main():
         data = lame_whisper_read(whisper_file)
         metric = whisper_file.split('.')[0].split(args.path)[1].replace('/', '.')
         send_data(metric, data, args.host, int(args.port))
+        os.remove(whisper_file)
 
 if __name__ == '__main__':
     main()

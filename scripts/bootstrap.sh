@@ -7,6 +7,8 @@ port=8086
 graphite_config=/usr/local/etc/graphite_db.json
 default_config=/usr/local/etc/default_db.json
 
+preloaded_db=/var/lib/influxdb/.db_loaded
+
 
 # check if a database already exists. returns 0 if it exists. 
 # else it returns 1
@@ -64,10 +66,20 @@ function create_database() {
 
 # main function
 function main() {
-	sleep 10
-	change_root_password
-	create_database ${GRAPHITE_DATABASE} ${GRAPHITE_USERNAME} ${GRAPHITE_PASSWORD} ${graphite_config}
-	create_database ${DEFAULT_DATABASE} ${DEFAULT_USERNAME} ${DEFAULT_PASSWORD} ${default_config}
+	if [[ ! -f "${preloaded_db}" ]]; then
+		printf 'Waiting for influxdb'
+		until $(curl -o /dev/null -s --head --fail http://${host}:${port}/ping); do
+		    printf '.'
+		    sleep 5
+		done
+		echo ''
+		change_root_password
+		create_database ${GRAPHITE_DATABASE} ${GRAPHITE_USERNAME} ${GRAPHITE_PASSWORD} ${graphite_config}
+		create_database ${DEFAULT_DATABASE} ${DEFAULT_USERNAME} ${DEFAULT_PASSWORD} ${default_config}
+		touch "${preloaded_db}"
+	else
+		echo 'database already created.'
+	fi
 	while :; do sleep 60; done
 }
 

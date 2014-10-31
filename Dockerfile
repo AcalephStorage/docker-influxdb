@@ -1,18 +1,25 @@
 FROM ubuntu:trusty
 MAINTAINER Acaleph <admin@acale.ph>
 
-# Install InfluxDB
-RUN apt-get update && apt-get upgrade -y
-
-RUN apt-get install -y language-pack-en wget curl python python-pip
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
+# update system
+RUN apt-get update && \
+    apt-get upgrade -y && \ 
+    apt-get install -y language-pack-en wget curl python python-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
-RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
-RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && chmod 0744 /usr/local/bin/forego
+# install latest influxdb
+RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && \
+    dpkg -i influxdb_latest_amd64.deb && \
+    rm influxdb_latest_amd64.deb
+
+# install latest forego
+RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && \
+    chmod 0744 /usr/local/bin/forego
 
 ADD ./configs/influxdb.conf /usr/local/etc/influxdb.conf
 ADD ./configs/graphite_db.json /usr/local/etc/graphite_db.json
@@ -25,9 +32,6 @@ ADD ./scripts/whisper-to-influxdb.py /usr/local/bin/whisper-to-influxdb.py
 ADD ./scripts/start /usr/local/etc/start
 
 RUN pip install whisper
-
-# cleanup
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV ROOT_PASSWORD root
 ENV GRAPHITE_DATABASE graphite

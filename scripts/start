@@ -3,39 +3,41 @@
 start() {
   echo "---> Starting Influxdb"
   
-  echo "----> Setting max-open-shards to match ulimit"
-  sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" /usr/local/etc/influxdb.conf
+  # echo "----> Setting max-open-shards to match ulimit"
+  # sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" /usr/local/etc/influxdb.conf
 
-  echo "----> Start Foreman"
-  exec /usr/local/bin/forego start -f /usr/local/etc/Procfile -c influxdb=1
+  # echo "----> Start Foreman"
+  # exec /usr/local/bin/forego start -f /usr/local/etc/Procfile -c influxdb=1
+  exec /opt/influxdb/influxd -config /etc/opt/influxdb/influxdb.conf
 }
 
-migrate_graphite() {
-  echo "---> Migrating Graphite"
-  exec /usr/local/bin/whisper-to-influxdb.py /graphite-data/
-}
+# migrate_graphite() {
+#   echo "---> Migrating Graphite"
+#   exec /usr/local/bin/whisper-to-influxdb.py /graphite-data/
+# }
 
-health() {
-  echo "OK - Health check to be implemented"
-  exit 0
-}
+# health() {
+#   echo "OK - Health check to be implemented"
+#   exit 0
+# }
 
-run_help() {
-  echo "The following commands are available:"
-  echo "start   - Runs Influxdb"
-  echo "migrate_graphite - Migrates Graphite Whisper data to Influxdb's graphite handler"
-  echo "health - Returns health of the influxdb service"
-}
+# run_help() {
+#   echo "The following commands are available:"
+#   echo "start   - Runs Influxdb"
+#   echo "migrate_graphite - Migrates Graphite Whisper data to Influxdb's graphite handler"
+#   echo "health - Returns health of the influxdb service"
+# }
 
 
 main() {
   set -eo pipefail
-  case "$1" in
-  start)           shift; start $@;;
-  migrate_graphite)         migrate_graphite;;
-  health)            health;;
-  *)               run_help;;
-  esac
+  start
+  # case "$1" in
+  # start)           shift; start $@;;
+  # migrate_graphite)         migrate_graphite;;
+  # health)            health;;
+  # *)               run_help;;
+  # esac
 }
 
 main "$@"

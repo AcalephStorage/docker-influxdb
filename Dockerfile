@@ -11,7 +11,7 @@ ENV LC_ALL en_US.UTF-8
 
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 
-RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && dpkg -i influxdb_latest_amd64.deb
+RUN wget https://s3.amazonaws.com/influxdb/influxdb_0.8.8_amd64.deb && dpkg -i influxdb_0.8.8_amd64.deb
 RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && chmod 0744 /usr/local/bin/forego
 
 ADD ./configs/influxdb.conf /usr/local/etc/influxdb.conf

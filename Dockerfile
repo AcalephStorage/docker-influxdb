@@ -15,7 +15,7 @@ RUN apt-get update && \
 # install latest influxdb
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_0.8.8_amd64.deb && \
     dpkg -i influxdb_0.8.8_amd64.deb && \
-    rm influxdb_latest_amd64.deb
+    rm influxdb_0.8.8_amd64.deb
 
 # install latest forego
 RUN wget https://godist.herokuapp.com/projects/ddollar/forego/releases/current/linux-amd64/forego -O /usr/local/bin/forego && \
